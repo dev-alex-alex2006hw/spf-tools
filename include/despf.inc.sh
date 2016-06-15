@@ -110,7 +110,7 @@ parsepf() {
   then
     myns=$(findns $host 2>/dev/null)
   else
-    myns=$(sed -n 's/^nameserver \([\.:0-9a-f]*\)/\1/p' /etc/resolv.conf)
+    myns=$(sed -n 's/^nameserver \([\.:0-9a-fA-F]*\)/\1/p' /etc/resolv.conf)
   fi
   for ns in $myns
   do
@@ -267,7 +267,7 @@ checkval6() {
     C=$(echo $i | wc -c)
     # echo prints a newline --> 5 including \n
     test $C -le 5 || return 1
-    echo "$i" | tr -d '[0-9a-f]' | grep -q '^$' || return 1
+    echo "$i" | tr -d '[0-9a-fA-F]' | grep -q '^$' || return 1
   done
 }
 
@@ -285,9 +285,9 @@ canon6() {
     add=""
     for a in $(awk -v MYEND=$((8-$D)) 'BEGIN { for(i=1;i<=MYEND;i++) print i }')
     do
-      add=${add}:0
+      add=${add}:0000
     done
-    out=$(echo $1 | sed "s/::/${add}:/;s/^:/0:/;s/:$/:0/")
+    out=$(echo $1 | sed "s/::/${add}:/;s/^:/0000:/;s/:$/:0000/")
     echo $out
   else
     return 1
